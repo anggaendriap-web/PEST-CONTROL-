@@ -1,0 +1,6 @@
+{
+  "name": "Pest Control Management - PT Boston Indo Global",
+  "description": "Sistem Manajemen Pest Control Terpadu PT Boston Indo Global: Penjualan, Invoice, Customer, PO Supplier, Kas Besar & Kecil, Buku Bank, AR/AP, Neraca Laba Rugi & Arus Kas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

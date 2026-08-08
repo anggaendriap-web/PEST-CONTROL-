@@ -1,0 +1,243 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user with role-based access",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the user" },
+        "role": { "type": "string", "enum": ["OWNER", "FINANCE", "ADMIN_SALES"] },
+        "title": { "type": "string", "description": "Job title" },
+        "avatar": { "type": "string", "description": "Avatar URL or identifier" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "password": { "type": "string" }
+      },
+      "required": ["name", "role", "email"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Client information for pest control services",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "industry": { "type": "string" },
+        "contactPerson": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "address": { "type": "string" },
+        "city": { "type": "string" },
+        "pestRisk": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "createdAt": { "type": "string", "format": "date" },
+        "totalOrders": { "type": "number" },
+        "totalSpent": { "type": "number" },
+        "contractStartDate": { "type": "string" },
+        "contractEndDate": { "type": "string" },
+        "annualContractValue": { "type": "number" },
+        "monthlyContractValue": { "type": "number" },
+        "npwp": { "type": "string" },
+        "npwpName": { "type": "string" },
+        "npwpAddress": { "type": "string" },
+        "isPKP": { "type": "boolean" }
+      },
+      "required": ["name", "email", "status"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Vendors for chemicals, equipment, and safety gear",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["CHEMICALS", "EQUIPMENT", "SAFETY_PPE", "BAIT_STATION", "GENERAL_CONSUMABLES"] },
+        "contactPerson": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "address": { "type": "string" },
+        "bankName": { "type": "string" },
+        "bankAccount": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "totalPO": { "type": "number" },
+        "totalBalanceDue": { "type": "number" },
+        "npwp": { "type": "string" },
+        "npwpName": { "type": "string" },
+        "npwpAddress": { "type": "string" },
+        "isPKP": { "type": "boolean" }
+      },
+      "required": ["name", "category", "status"]
+    },
+    "SalesOrder": {
+      "title": "Sales Order",
+      "description": "Work order or contract for services",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "serviceType": { "type": "string" },
+        "contractStartDate": { "type": "string" },
+        "contractEndDate": { "type": "string" },
+        "visitFrequency": { "type": "string", "enum": ["MINGGUAN", "DWI_MINGGUAN", "BULANAN", "INSIDENTIL"] },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "taxPPN": { "type": "number" },
+        "grandTotal": { "type": "number" },
+        "status": { "type": "string", "enum": ["DRAFT", "ACTIVE", "COMPLETED", "CANCELLED"] },
+        "paymentTerm": { "type": "string" },
+        "salesPerson": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "customerId", "grandTotal", "status"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Billing document for sales orders",
+      "type": "object",
+      "properties": {
+        "invoiceNumber": { "type": "string" },
+        "salesOrderId": { "type": "string" },
+        "salesOrderNumber": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "issueDate": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "grandTotal": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "remainingBalance": { "type": "number" },
+        "status": { "type": "string", "enum": ["UNPAID", "PARTIAL", "PAID", "OVERDUE"] }
+      },
+      "required": ["invoiceNumber", "customerId", "grandTotal", "status"]
+    },
+    "PurchaseOrder": {
+      "title": "Purchase Order",
+      "description": "Procurement document for suppliers",
+      "type": "object",
+      "properties": {
+        "poNumber": { "type": "string" },
+        "supplierId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "orderDate": { "type": "string" },
+        "grandTotal": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "status": { "type": "string", "enum": ["PENDING", "ORDERED", "RECEIVED", "CANCELLED"] },
+        "paymentStatus": { "type": "string", "enum": ["UNPAID", "PARTIAL", "PAID"] }
+      },
+      "required": ["poNumber", "supplierId", "grandTotal", "status"]
+    },
+    "CashTransaction": {
+      "title": "Cash Transaction",
+      "description": "Record of income or expense",
+      "type": "object",
+      "properties": {
+        "refNumber": { "type": "string" },
+        "ledgerType": { "type": "string", "enum": ["KAS_BESAR", "KAS_KECIL", "BUKU_BANK"] },
+        "date": { "type": "string" },
+        "category": { "type": "string" },
+        "type": { "type": "string", "enum": ["INCOME", "EXPENSE", "TRANSFER"] },
+        "amount": { "type": "number" },
+        "balanceAfter": { "type": "number" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["refNumber", "ledgerType", "amount", "type"]
+    },
+    "BankAccount": {
+      "title": "Bank Account",
+      "description": "Company bank account details and balance",
+      "type": "object",
+      "properties": {
+        "bankName": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "accountHolder": { "type": "string" },
+        "balance": { "type": "number" }
+      },
+      "required": ["bankName", "accountNumber", "balance"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry",
+      "description": "Double-entry accounting record",
+      "type": "object",
+      "properties": {
+        "entryNumber": { "type": "string" },
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "accountCode": { "type": "string" },
+        "accountName": { "type": "string" },
+        "debit": { "type": "number" },
+        "credit": { "type": "number" }
+      },
+      "required": ["entryNumber", "accountCode", "debit", "credit"]
+    },
+    "MarketingTarget": {
+      "title": "Marketing Target",
+      "description": "Sales and marketing team performance targets",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "area": { "type": "string" },
+        "targetOmset": { "type": "number" },
+        "commissionRate": { "type": "number" }
+      },
+      "required": ["name", "targetOmset"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global application configuration",
+      "type": "object",
+      "properties": {
+        "companyInfo": { "type": "object" },
+        "financialConfig": { "type": "object" },
+        "kasBesarInitialBalance": { "type": "number" },
+        "kasKecilInitialBalance": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "System users collection"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Clients collection"
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Suppliers collection"
+    },
+    "/salesOrders/{orderId}": {
+      "schema": "SalesOrder",
+      "description": "Sales orders collection"
+    },
+    "/invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Invoices collection"
+    },
+    "/purchaseOrders/{poId}": {
+      "schema": "PurchaseOrder",
+      "description": "Purchase orders collection"
+    },
+    "/cashTransactions/{trxId}": {
+      "schema": "CashTransaction",
+      "description": "Cash transactions ledger"
+    },
+    "/bankAccounts/{accountId}": {
+      "schema": "BankAccount",
+      "description": "Bank accounts collection"
+    },
+    "/journalEntries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "General journal entries"
+    },
+    "/marketingTeam/{memberId}": {
+      "schema": "MarketingTarget",
+      "description": "Marketing team members"
+    },
+    "/settings/global": {
+      "schema": "Settings",
+      "description": "Global application settings"
+    }
+  }
+}

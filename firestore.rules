@@ -1,0 +1,138 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+
+    // Entity Validations
+    function isValidUser(data) {
+      return data.name is string && data.role in ['OWNER', 'FINANCE', 'ADMIN_SALES'] && data.email is string;
+    }
+    
+    function isValidCustomer(data) {
+      return data.name is string && data.email is string && data.status in ['ACTIVE', 'INACTIVE'];
+    }
+    
+    function isValidSupplier(data) {
+      return data.name is string && data.category in ['CHEMICALS', 'EQUIPMENT', 'SAFETY_PPE', 'BAIT_STATION', 'GENERAL_CONSUMABLES'] && data.status in ['ACTIVE', 'INACTIVE'];
+    }
+    
+    function isValidSalesOrder(data) {
+      return data.orderNumber is string && data.customerId is string && data.grandTotal is number && data.status in ['DRAFT', 'ACTIVE', 'COMPLETED', 'CANCELLED'];
+    }
+    
+    function isValidInvoice(data) {
+      return data.invoiceNumber is string && data.customerId is string && data.grandTotal is number && data.status in ['UNPAID', 'PARTIAL', 'PAID', 'OVERDUE'];
+    }
+    
+    function isValidPurchaseOrder(data) {
+      return data.poNumber is string && data.supplierId is string && data.grandTotal is number && data.status in ['PENDING', 'ORDERED', 'RECEIVED', 'CANCELLED'];
+    }
+    
+    function isValidCashTransaction(data) {
+      return data.refNumber is string && data.ledgerType in ['KAS_BESAR', 'KAS_KECIL', 'BUKU_BANK'] && data.amount is number && data.type in ['INCOME', 'EXPENSE', 'TRANSFER'];
+    }
+    
+    function isValidBankAccount(data) {
+      return data.bankName is string && data.accountNumber is string && data.balance is number;
+    }
+    
+    function isValidJournalEntry(data) {
+      return data.entryNumber is string && data.accountCode is string && data.debit is number && data.credit is number;
+    }
+    
+    function isValidMarketingTarget(data) {
+      return data.name is string && data.targetOmset is number;
+    }
+    
+    function isValidSettings(data) {
+      return true; // Simple for now
+    }
+
+    // Collection Rules
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidUser(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidCustomer(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /suppliers/{supplierId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidSupplier(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /salesOrders/{orderId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidSalesOrder(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidInvoice(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /purchaseOrders/{poId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidPurchaseOrder(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /cashTransactions/{trxId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidCashTransaction(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /bankAccounts/{accountId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidBankAccount(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /journalEntries/{entryId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidJournalEntry(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /marketingTeam/{memberId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidMarketingTarget(incoming());
+      allow delete: if isSignedIn();
+    }
+    
+    match /settings/global {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && isValidSettings(incoming());
+    }
+  }
+}
